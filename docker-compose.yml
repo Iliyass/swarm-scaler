@@ -1,0 +1,28 @@
+version: "3.9"
+services:
+  scaler:
+    image: swarm-scaler_scaler
+    build: .
+    volumes:
+      - ./app.py:/code/app.py
+      - /var/run/docker.sock:/var/run/docker.sock
+  redis:
+    image: "redis"
+    deploy:
+      labels:
+        - scaler.enabled=true
+        - scaler.replica.max=1
+        - scaler.replica.min=1
+        - scaler.replica.step=1
+        - scaler.condition.cpu=20
+        - scaler.condition.interval=1
+  traefik:
+    image: "traefik"
+    deploy:
+      labels:
+        - scaler.enabled=true
+        - scaler.replica.max=1
+        - scaler.replica.min=1
+        - scaler.replica.step=1
+        - scaler.condition.cpu=20
+        - scaler.condition.interval=5
